@@ -17,15 +17,12 @@ public class UserRoleProject {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private UUID userId;
 
-    @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
-    private Role role;
+    private UUID roleId;
 
-    @ManyToOne
     @JoinColumn(name = "project_id", nullable = false)
-    private Project project;
+    private UUID projectId;
 }

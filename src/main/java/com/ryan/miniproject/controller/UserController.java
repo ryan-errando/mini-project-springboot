@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -28,12 +29,23 @@ public class UserController {
     public void saveUser(@RequestBody User user){
         webHookService.sendData(user);
         service.saveUser(user);
-        emailService.sendEmail("errandoryan@gmail.com", "Welcome " + user.getFullName() + "!", "thank you for registering to our website!");
+//        emailService.sendEmail("errandoryan@gmail.com", "Welcome " + user.getFullName() + "!", "thank you for registering to our website!");
+    }
+
+    @DeleteMapping("{id}")
+    public void deleteUser(@PathVariable("id")UUID id){
+        service.deleteUser(id);
     }
 
     @GetMapping
     public ResponseEntity<List<User>> findAllUsers(){
         return ResponseEntity.ok(service.findAllUser());
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<User> updateUser(@PathVariable("id") UUID id, @RequestBody User user){
+        User update = service.updateUser(user, id);
+        return ResponseEntity.ok(update);
     }
 
 }
