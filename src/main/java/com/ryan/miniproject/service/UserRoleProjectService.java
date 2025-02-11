@@ -9,6 +9,9 @@ import com.ryan.miniproject.repository.RoleRepository;
 import com.ryan.miniproject.repository.UserRepository;
 import com.ryan.miniproject.repository.UserRoleProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,10 +43,12 @@ public class UserRoleProjectService {
         }
     }
 
+    @CacheEvict(value = "urp", key = "#id")
     public void deleteURP(UUID id){
         repository.deleteById(id);
     }
 
+    @CachePut(value = "urp", key = "#urp.id")
     public UserRoleProject updateURP(UUID id, UserRoleProject urp){
         UserRoleProject existingURP = repository.findById(id).get();
         if(existingURP != null){
@@ -54,6 +59,7 @@ public class UserRoleProjectService {
         return repository.save(existingURP);
     }
 
+    @CachePut(value = "urp", key = "#urp.id")
     public void updateURPS (List<UserRoleProjectUpdateDto> dto){
         for(UserRoleProjectUpdateDto urp : dto){
             UserRoleProject existURP = repository.findById(urp.getId()).get();
@@ -64,6 +70,7 @@ public class UserRoleProjectService {
         }
     }
 
+    @Cacheable(value = "urp", key = "#userId")
     public UserRoleProjectDto findByUserId(UUID userId){
         List<UserRoleProject> userRoleProjects = repository.findByUserId(userId);
         List<RoleProjectDto> roleProjectDtos = userRoleProjects.stream()
@@ -79,6 +86,7 @@ public class UserRoleProjectService {
                 .build();
     }
 
+    @Cacheable(value = "urp")
     public List<UserRoleProject> findAll(){
         return repository.findAll();
     }

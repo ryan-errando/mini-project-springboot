@@ -3,6 +3,9 @@ package com.ryan.miniproject.service;
 import com.ryan.miniproject.model.Role;
 import com.ryan.miniproject.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,10 +20,12 @@ public class RoleService {
         repository.save(role);
     }
 
+    @Cacheable(value = "roles")
     public List<Role> findAllRoles(){
         return repository.findAll();
     }
 
+    @CachePut(value = "roles", key = "#id")
     public Role updateRole(Role role, UUID id){
         Role existingRole = repository.findById(id).get();
         if(existingRole != null){
@@ -29,6 +34,7 @@ public class RoleService {
         return repository.save(existingRole);
     }
 
+    @CacheEvict(value = "roles", key = "#id")
     public void deleteRole(UUID id){
         repository.deleteById(id);
     }
